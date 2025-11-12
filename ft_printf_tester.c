@@ -6,7 +6,7 @@
 /*   By: guillsan <guillsan@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 13:12:33 by guillsan          #+#    #+#             */
-/*   Updated: 2025/11/12 14:02:24 by guillsan         ###   ########.fr       */
+/*   Updated: 2025/11/12 15:24:00 by guillsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,8 @@ int test_ft_printf(void)
 	printf(CLR_YELLOW "\n========= Cs (NULL) =========\n\n" CLR_RST);
 	fflush(stdout);
 	
-	RUN_TEST(&data, "char NUL inside output (printed as raw byte)", "|%c|", '\0'); /* output will contain NUL: harness reads raw bytes */
+	/* output will contain NUL: harness reads raw bytes */
+	RUN_TEST(&data, "char NUL inside output (printed as raw byte)", "|%c|", '\0');
 
 		
 	/* --- multiple conversions in one format --- */
@@ -230,7 +231,7 @@ int test_ft_printf(void)
 	RUN_TEST(&data, "flags order -0", "|% -05d|", 42);
 	RUN_TEST(&data, "flags combination '#0+' for hex", "|%#0+8x|", 0x1abu);
 
-	/* --- extremely large width/precision to detect crashes (use moderately large to avoid huge allocations) --- */
+	/* --- large width/precision --- */
 	printf(CLR_YELLOW "\n========= EXTREME PRECISION =========\n\n" CLR_RST);
 	fflush(stdout);
 	
@@ -318,8 +319,8 @@ int test_ft_printf(void)
 	RUN_TEST(&data, "zero and plus", "|%+05d|", 42);
 	RUN_TEST(&data, "zero and space", "|% 05d|", 42);
 	RUN_TEST(&data, "many zeros", "|%0000005d|", 42);        /* repeated zero */
-	RUN_TEST(&data, "many minus", "|%-----5d|", 42);        /* repeated minus */
-	RUN_TEST(&data, "minus then zero", "|% -0-0 10d|", 42); /* weird spacing & repeats */
+	RUN_TEST(&data, "many minus", "|%-----5d|", 42);         /* repeated minus */
+	RUN_TEST(&data, "minus then zero", "|% -0-0 10d|", 42);  /* weird spacing & repeats */
 	
 	/* ---- Plus / space flags and interactions ---- */
 	printf(CLR_YELLOW "\n========= '+'/' ' FLAG INTERACTIONS =========\n\n" CLR_RST);
@@ -367,7 +368,7 @@ int test_ft_printf(void)
 	RUN_TEST(&data, "width 200", "|%200d|", 1);
 	RUN_TEST(&data, "precision 200", "|%.200d|", 1);
 	RUN_TEST(&data, "width 200 + precision 200", "|%200.200d|", 1);
-	RUN_TEST(&data, "huge width but small value", "|%1000d|", 1); /* may be slow but tests allocation/behavior */
+	RUN_TEST(&data, "huge width but small value", "|%1000d|", 1);
 	
 
 	/* ---- unsigned / hex / octal edge cases ---- */
@@ -466,13 +467,12 @@ int test_ft_printf(void)
 	/* ---- Edge: malformed but syntactically allowed repetitions ---- */
 	printf(CLR_YELLOW "\n========= MALFORMED =========\n\n" CLR_RST);
 	fflush(stdout);
-	/* --- malformed/unsupported specifiers: should be tested carefully, 
+	
+	/* --- malformed/unsupported specifiers:
 	 * behaviour might be implementation defined.
-	 * In many libc, however, they handle multiple of them predictably:
-	 * '%%q' prints '%q' in many libc, but it's not portable.
-	 * or clutter of them, like below.
+	 * In many libc implementations, however, they handle them predictably,
+	 * like below:
 	 */
-
 	RUN_TEST(&data, "repeat +++---000", "|%+++---00010.4d|", 314);
 	RUN_TEST(&data, "repeat # # #", "|%###08x|", 0x1);
 	RUN_TEST(&data, "repeat spaces", "|%    10d|", 5);   /* spaces between percent and flags (libc ignores) */
