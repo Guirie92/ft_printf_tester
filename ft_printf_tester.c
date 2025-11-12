@@ -6,7 +6,7 @@
 /*   By: guillsan <guillsan@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 13:12:33 by guillsan          #+#    #+#             */
-/*   Updated: 2025/11/12 15:24:00 by guillsan         ###   ########.fr       */
+/*   Updated: 2025/11/13 00:41:44 by guillsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,27 +82,28 @@ int test_ft_printf(void)
 	
 	data.test_ok = 0;
 	data.test_ko = 0;
-	
+
 	printf("\n========= ft_printf automated tests =========\n");
 
 	/* --- SIMPLE conversions --- */
 	printf(CLR_YELLOW "\n========= SIMPLE CONVERSIONS =========\n\n" CLR_RST);
 	fflush(stdout);
 	
+	RUN_TEST(&data, "char basic", "|%.4s|", (char *)NULL);
 	RUN_TEST(&data, "char basic", "|%c|", 'A');
 	RUN_TEST(&data, "string basic", "|%s|", "hello");
 	RUN_TEST(&data, "string empty", "|%s|", "");
-	RUN_TEST(&data, "string NULL", "|%s|", (char*)NULL);
+	RUN_TEST(&data, "string NULL", "|%s|", (char *)NULL);
 	RUN_TEST(&data, "percent literal", "%%%% %%%% %s", "end");
 
-	RUN_TEST(&data, "pointer stack var", "|%p|", (void*)&test_ft_printf);
+	RUN_TEST(&data, "pointer stack var", "|%p|", (void *)&test_ft_printf);
 	
 	
 	/* pointer NULL */
 	printf(CLR_YELLOW "\n========= POINTER NULL =========\n\n" CLR_RST);
 	fflush(stdout);
 	
-	RUN_TEST(&data, "pointer NULL", "|%p|", (void*)0);
+	RUN_TEST(&data, "pointer NULL", "|%p|", (void *)0);
 
 	RUN_TEST(&data, "int basic", "|%d|", 42);
 	RUN_TEST(&data, "int negative", "|%d|", -42);
@@ -188,15 +189,14 @@ int test_ft_printf(void)
 	printf(CLR_YELLOW "\n========= Cs (NULL) =========\n\n" CLR_RST);
 	fflush(stdout);
 	
-	/* output will contain NUL: harness reads raw bytes */
-	RUN_TEST(&data, "char NUL inside output (printed as raw byte)", "|%c|", '\0');
+	RUN_TEST(&data, "char NUL inside output (printed as raw byte)", "|%c|", '\0'); /* output will contain NUL: harness reads raw bytes */
 
 		
 	/* --- multiple conversions in one format --- */
 	printf(CLR_YELLOW "\n========= MULTIPLE CONVERSIONS =========\n\n" CLR_RST);
 	fflush(stdout);
 	
-	RUN_TEST(&data, "mixed conversions", "A:%d B:%u C:%x S:%s P:%p E:%%", -7, 42u, 0xfaceu, "str", (void*)&printf);
+	RUN_TEST(&data, "mixed conversions", "A:%d B:%u C:%x S:%s P:%p E:%%", -7, 42u, 0xfaceu, "str", (void *)&printf);
 
 #if TEST_FLAGS
 	
@@ -254,9 +254,46 @@ int test_ft_printf(void)
 	RUN_TEST(&data, "negative large", "|%i|", -2147483647);
 	RUN_TEST(&data, "char normal", "|%c|", 'A');
 	RUN_TEST(&data, "char NUL", "|%c|", '\0');
-	RUN_TEST(&data, "string NULL", "|%s|", (char*)NULL);
+	RUN_TEST(&data, "string NULL", "|%s|", (char *)NULL);
 	RUN_TEST(&data, "string empty", "|%s|", "");
-	RUN_TEST(&data, "pointer NULL", "|%p|", (void*)0);
+	RUN_TEST(&data, "pointer NULL", "|%p|", (void *)0);
+
+
+	RUN_TEST(&data, "(char *)NULL", "|%10.6s|", (char *)NULL);
+
+	RUN_TEST(&data, "(char *)NULL", "|%10.3s|", (char *)NULL);
+	
+	RUN_TEST(&data, "(char *)NULL", "|%-10.3s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%-10.6s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%-10.9s|", (char *)NULL);
+	
+	RUN_TEST(&data, "(char *)NULL", "|%020.9s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%20.9s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%-20.9s|", (char *)NULL);
+	
+	RUN_TEST(&data, "(char *)NULL", "|%020.5s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%20.5s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%-20.5s|", (char *)NULL);
+
+	RUN_TEST(&data, "(char *)NULL", "|%020.0s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%20.0s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%-20.0s|", (char *)NULL);
+
+	RUN_TEST(&data, "(char *)NULL", "|%020.s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%20.s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%-20.s|", (char *)NULL);
+
+	RUN_TEST(&data, "(char *)NULL", "|%02.s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%2.s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%-2.s|", (char *)NULL);
+
+	RUN_TEST(&data, "(char *)NULL", "|%02.6s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%2.6s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|%-2.6s|", (char *)NULL);
+
+	RUN_TEST(&data, "(char *)NULL", "|% 02.6s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|% 2.6s|", (char *)NULL);
+	RUN_TEST(&data, "(char *)NULL", "|% -2.6s|", (char *)NULL);
 
 	printf(CLR_YELLOW "\n========= EDGE CASES (NULL/NIL & TEST_FLAGS) =========\n\n" CLR_RST);
 	fflush(stdout);
@@ -273,24 +310,24 @@ int test_ft_printf(void)
 	RUN_TEST(&data, "ptr NULL padding 0", "|%020p|", NULL);
 	RUN_TEST(&data, "ptr NULL padding 0 + precision", "|%020.9p|", NULL);
 	RUN_TEST(&data, "ptr NULL padding 0 + precision + '+'", "|%+020.9p|", NULL);
-	RUN_TEST(&data, "string NULL", "|%.9s|", (char*)NULL);
+	RUN_TEST(&data, "string NULL", "|%.9s|", (char *)NULL);
 
 #endif
 
-	RUN_TEST(&data, "string NULL padding 0", "|%s|", (char*)NULL);
+	RUN_TEST(&data, "string NULL padding 0", "|%s|", (char *)NULL);
 
 #if TEST_FLAGS
 
-	RUN_TEST(&data, "string NULL padding 0", "|%2s|", (char*)NULL);
-	RUN_TEST(&data, "string NULL padding 0", "|%1s|", (char*)NULL);
-	RUN_TEST(&data, "string NULL padding 0", "|%0s|", (char*)NULL);
+	RUN_TEST(&data, "string NULL padding 0", "|%2s|", (char *)NULL);
+	RUN_TEST(&data, "string NULL padding 0", "|%1s|", (char *)NULL);
+	RUN_TEST(&data, "string NULL padding 0", "|%0s|", (char *)NULL);
 	
-	RUN_TEST(&data, "string NULL padding 0", "|%020s|", (char*)NULL);
-	RUN_TEST(&data, "string NULL padding ' '", "|%20s|", (char*)NULL);
-	RUN_TEST(&data, "string NULL padding '-'", "|%-20s|", (char*)NULL);
-	RUN_TEST(&data, "string NULL padding 0 + precision", "|%020.9s|", (char*)NULL);
-	RUN_TEST(&data, "string NULL padding ' ' + precision", "|%20.9s|", (char*)NULL);
-	RUN_TEST(&data, "string NULL padding '-' + precision", "|%-20.9s|", (char*)NULL);
+	RUN_TEST(&data, "string NULL padding 0", "|%020s|", (char *)NULL);
+	RUN_TEST(&data, "string NULL padding ' '", "|%20s|", (char *)NULL);
+	RUN_TEST(&data, "string NULL padding '-'", "|%-20s|", (char *)NULL);
+	RUN_TEST(&data, "string NULL padding 0 + precision", "|%020.9s|", (char *)NULL);
+	RUN_TEST(&data, "string NULL padding ' ' + precision", "|%20.9s|", (char *)NULL);
+	RUN_TEST(&data, "string NULL padding '-' + precision", "|%-20.9s|", (char *)NULL);
 	
 	/* ---- Width & precision edge combos (integers) ---- */
 	printf(CLR_YELLOW "\n========= WIDTH & PREC (INT) =========\n\n" CLR_RST);
@@ -406,6 +443,14 @@ int test_ft_printf(void)
 	RUN_TEST(&data, "char zero pad (ignored)", "|%05c|", 'Z');
 	RUN_TEST(&data, "multiple char and nul", "|%c-%c-%c|", 'A', '\0', 'B');
 	
+	RUN_TEST(&data, "", "|%.2c|", 'V');
+	RUN_TEST(&data, "", "|%.0c|", 'a');
+	RUN_TEST(&data, "", "|%.1c|", '\t');
+	RUN_TEST(&data, "", "|%.20c|", 'b');
+	RUN_TEST(&data, "", "|%-20c|", ';');
+	RUN_TEST(&data, "", "|%0-20.2c|", '=');
+	RUN_TEST(&data, "", "|%#8.20c|", 'n');
+	
 	/* ---- Percent literal with flags (should print % or behave like libc) ---- */
 	printf(CLR_YELLOW "\n========= %% LITERAL WITH TEST_FLAGS =========\n\n" CLR_RST);
 	fflush(stdout);
@@ -424,7 +469,7 @@ int test_ft_printf(void)
 	fflush(stdout);
 
 	RUN_TEST(&data, "mix int unsigned hex", "|%d %u %x|", -1, 4294967295u, 0xdead);
-	RUN_TEST(&data, "mix many types", "|%s|%c|%d|%u|%x|%p|", "hola", '!', -7, 255u, 0x2a, (void*)&printf);
+	RUN_TEST(&data, "mix many types", "|%s|%c|%d|%u|%x|%p|", "hola", '!', -7, 255u, 0x2a, (void *)&printf);
 	
 #if TEST_FLAGS
 
@@ -459,8 +504,8 @@ int test_ft_printf(void)
 	printf(CLR_YELLOW "\n========= MANY CONV =========\n\n" CLR_RST);
 	fflush(stdout);
 	
-	RUN_TEST(&data, "long mixed stress", "|%+08d|%#10x|%10s|%-5c|%.4u|%p|", 123, 0x1a, "hello", 'Q', 7u, (void*)&test_ft_printf);
-	RUN_TEST(&data, "long mixed stress", "|%+08d|%#10x|%10s|%-5c|%.4u|%+p|", 123, 0x1a, "hello", 'Q', 7u, (void*)&test_ft_printf);
+	RUN_TEST(&data, "long mixed stress", "|%+08d|%#10x|%10s|%-5c|%.4u|%p|", 123, 0x1a, "hello", 'Q', 7u, (void *)&test_ft_printf);
+	RUN_TEST(&data, "long mixed stress", "|%+08d|%#10x|%10s|%-5c|%.4u|%+p|", 123, 0x1a, "hello", 'Q', 7u, (void *)&test_ft_printf);
 	
 #if TEST_FLAGS_INVALID
 
