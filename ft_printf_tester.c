@@ -6,7 +6,7 @@
 /*   By: guillsan <guillsan@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 13:12:33 by guillsan          #+#    #+#             */
-/*   Updated: 2025/11/13 00:41:44 by guillsan         ###   ########.fr       */
+/*   Updated: 2025/11/13 00:51:59 by guillsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -488,7 +488,23 @@ int test_ft_printf(void)
 	RUN_TEST(&data, "INT_MIN with width", "|%20d|", INT_MIN);
 	RUN_TEST(&data, "INT_MIN with zero pad", "|%020d|", INT_MIN);
 	RUN_TEST(&data, "INT_MIN with precision", "|%.15d|", INT_MIN);
-	RUN_TEST(&data, "INT_MIN with plus/space", "|%+ 20.10d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with plus/space & prec", "|%+ 20.10d|", INT_MIN);
+
+	RUN_TEST(&data, "INT_MIN with zero pad & prec", "|%020.20d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with zero pad & prec", "|%021.20d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with zero pad & prec", "|%020.21d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with zero pad & prec", "|%025.20d|", INT_MIN);
+	
+	RUN_TEST(&data, "INT_MIN with zero pad & prec", "|%030.20d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with width pad & prec", "|%30.20d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with width pad", "|%30d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with width pad", "|%030d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with width zero pad & prec", "|%030.2d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with width zero pad & prec", "|%030.10d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with width zero pad & prec", "|%030.11d|", INT_MIN);
+	RUN_TEST(&data, "INT_MIN with '-' pad & prec", "|%-30.20d|", INT_MIN);
+	
+	RUN_TEST(&data, "INT_MIN with zero pad & prec", "|%020.25d|", INT_MIN);
 	
 	
 	/* ---- Some more odd but valid combos ---- */
