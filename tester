@@ -1,5 +1,31 @@
 #!/bin/bash
 
+print_help() {
+  cat <<EOF
+Usage: $0 [OPTIONS]
+
+Options:
+  -o              Test octal
+  -c              Test 'c' specifier
+  -s              Test 's' specifier
+  -p              Test 'p' specifier
+  -d              Test 'd' specifier
+  -i              Test 'i' specifier
+  -u              Test 'u' specifier
+  -x, -X          Test 'x' / 'X' specifiers
+  -b, --bonus     Run bonus tests
+  -v, --verbose   Verbose output
+  -m, --valgrind  Run under valgrind (also: --mem, --strict, etc.)
+
+  -h, --help      Show this help message
+
+Examples:
+  $0 -c
+  $0 -c --bonus
+  $0 -x -v --valgrind
+EOF
+}
+
 # Default flags
 SPECIFIER_TO_TEST=""
 TEST_OCTAL=0
@@ -10,7 +36,7 @@ TEST_PASS=0       # Enables PRINT_OK (for successful tests)
 RUN_VALGRIND=0
 
 # --- Argument Parsing ---
-TEMP=$(getopt -o ocspdiuxXbvm -l bonus,invalid,verbose,pass,pok,valgrind,mem,memcheck,strict -- "$@")
+TEMP=$(getopt -o ocspdiuxXbvmh -l bonus,invalid,verbose,pass,pok,valgrind,mem,memcheck,strict,help -- "$@")
 if [ $? -ne 0 ]; then
   echo "Failed to parse options." >&2
   exit 1
@@ -24,12 +50,13 @@ while true; do
     -b|--bonus) TEST_BONUS=1; shift ;;
     -v|--verbose) TEST_VERBOSE=1; shift ;;
     -m|--valgrind|--mem|--memcheck|--strict) RUN_VALGRIND=1; shift ;;
+    -h|--help) print_help; exit 0 ;;
     --) shift; break ;;
     *) echo "Internal error: $1" >&2; exit 1 ;;
   esac
 done
 
-rm -rf *.o tester
+rm -rf *.o exec
 
 # --- Rebuild libftprintf in the parent directory --- 
 make -C .. -s fclean
@@ -49,15 +76,15 @@ PARAMS="-DTEST_OCTAL=$TEST_OCTAL                \
 cc -w $PARAMS ft_printf_tester.c \
     -L ..                        \
     -lftprintf                   \
-    -o tester
+    -o exec
 
 # --- Check if compilation was successful before running --- 
 if [ $? -eq 0 ]; then
     echo "Tests compiled successfully. Running..."
     if [ $RUN_VALGRIND -eq 1 ]; then
-        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./tester
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./exec
     else
-        ./tester
+        ./exec
     fi
 else
     echo "Compilation failed."
