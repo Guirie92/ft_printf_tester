@@ -51,7 +51,7 @@ while true; do
     -o) TEST_OCTAL=1; shift ;;
     -c|-s|-p|-d|-i|-u|-x|-X) SPECIFIER_TO_TEST="${1#-}"; shift ;;  # keep last char
     -b|--bonus) TEST_BONUS=1; shift ;;
-    -e|--extreme|--invalid) TEST_BONUS=1; shift ;;
+    -e|--extreme|--invalid) TEST_BONUS=1; TEST_INVALID=1; shift ;;
     -v|--verbose) TEST_VERBOSE=1; shift ;;
     -k|--pok|--pass) TEST_VERBOSE=1; TEST_PASS=1; shift ;;
     -m|--valgrind|--mem|--memcheck|--strict) RUN_VALGRIND=1; shift ;;
