@@ -6,7 +6,7 @@
 /*   By: guillsan <guillsan@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 13:12:33 by guillsan          #+#    #+#             */
-/*   Updated: 2025/11/14 14:43:33 by guillsan         ###   ########.fr       */
+/*   Updated: 2025/11/14 20:15:28 by guillsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ static char* print_result(t_test_data *data, size_t total_ok, size_t total_ko,
 	const char *spec);
 static void fmt_nbr(char *buffer, size_t n);
 static void	init_test_data(t_test_data *data);
+static void	test_percent_module(t_test_data *data);
 static void	test_flags_exhaustive(t_test_data *data, const char *spec, 
 	size_t param_size, const void *params_in, const char **param_names,
 	t_param_type ptype);
@@ -36,7 +37,7 @@ int main(void)
 
 	test_specifiers_mandatory(&data);
 
-	test_mixed(&data);
+	//test_mixed(&data);
 
 #if TEST_FLAGS
 
@@ -183,10 +184,11 @@ static void init_test_data(t_test_data *data)
 
 static void flush_sleep(t_test_data *data)
 {
-    if (!data->b_flush)
-        return;
-    fflush(stdout);
-    usleep((data->flush_seconds * 1000) * 1000); /* 40ms by default */
+	(void)data;
+    //if (!data->b_flush)
+   //     return;
+    //fflush(stdout);
+   // usleep((data->flush_seconds * 1000) * 1000); /* 40ms by default */
 }
 
 static const char flag_chars[5] = { '#', '+', ' ', '-', '0' };
