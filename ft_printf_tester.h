@@ -6,7 +6,7 @@
 /*   By: guillsan <guillsan@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 13:56:10 by guillsan          #+#    #+#             */
-/*   Updated: 2025/11/14 02:46:38 by guillsan         ###   ########.fr       */
+/*   Updated: 2025/11/14 06:42:00 by guillsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,5 +263,145 @@ do                                                                             \
 } while (0)
 
 #endif
+
+
+
+#if VERBOSE & PRINT_OK 
+#define CAP_AND_COMPARE(data, desc, ft_expr, libc_expr) do {                                                   \
+	char __out_ft[CAP_SIZE], __out_libc[CAP_SIZE];                                                             \
+	int __p[2]; ssize_t __n;                                                                                   \
+	int __r_ft, __r_libc;                                                                                      \
+	int __saved_stdout;                                                                                        \
+	                                                                                                           \
+	/* capture ft_expr */                                                                                      \
+	if (pipe(__p) == -1) { perror("pipe"); exit(1); }                                                          \
+	__saved_stdout = dup(STDOUT_FILENO); if (__saved_stdout == -1) { perror("dup"); exit(1); }                 \
+	dup2(__p[1], STDOUT_FILENO); close(__p[1]);                                                                \
+	__r_ft = (ft_expr);                                                                                        \
+	fflush(stdout); dup2(__saved_stdout, STDOUT_FILENO); close(__saved_stdout);                                \
+	__n = read(__p[0], __out_ft, CAP_SIZE - 1); if (__n < 0) __n = 0; __out_ft[__n] = '\0'; close(__p[0]);     \
+	                                                                                                           \
+	/* capture libc_expr */                                                                                    \
+	if (pipe(__p) == -1) { perror("pipe"); exit(1); }                                                          \
+	__saved_stdout = dup(STDOUT_FILENO); if (__saved_stdout == -1) { perror("dup"); exit(1); }                 \
+	dup2(__p[1], STDOUT_FILENO); close(__p[1]);                                                                \
+	__r_libc = (libc_expr);                                                                                    \
+	fflush(stdout); dup2(__saved_stdout, STDOUT_FILENO); close(__saved_stdout);                                \
+	__n = read(__p[0], __out_libc, CAP_SIZE - 1); if (__n < 0) __n = 0; __out_libc[__n] = '\0'; close(__p[0]); \
+	                                                                                                           \
+	/* compare */                                                                                              \
+	int __ok = 0;                                                                                              \
+	if (__r_ft == __r_libc)                                                                                    \
+	{                                                                                                          \
+	    if (__r_ft >= 0 && memcmp(__out_ft, __out_libc, (size_t)__r_ft) == 0) __ok = 1;                        \
+	    if (__r_ft < 0  && memcmp(__out_ft, __out_libc, 1) == 0) __ok = 1;                                     \
+	}                                                                                                          \
+	                                                                                                           \
+	if (__ok)                                                                                                  \
+	{                                                                                                          \
+	    printf(CLR_GREEN "[PASS]   %s\n" CLR_RST, (desc));                                                     \
+	    printf("  ft_printf  : %s\n", __out_ft);                                                               \
+	    printf("  libc printf: %s\n", __out_libc);                                                             \
+	    printf("  ft (%d) | lb (%d)\n", __r_ft, __r_libc); fflush(stdout);                                     \
+	    (data)->test_ok++;                                                                                     \
+	}                                                                                                          \
+	else                                                                                                       \
+	{                                                                                                          \
+	    printf(CLR_RED "[FAIL]   %s\n" CLR_RST, (desc));                                                       \
+	    printf("  ft_printf  : %s\n", __out_ft);                                                               \
+	    printf("  libc printf: %s\n", __out_libc);                                                             \
+	    if (__r_ft != __r_libc)                                                                                \
+	        printf("  ft (" CLR_RED "%d" CLR_RST ") | lb (" CLR_GREEN "%d" CLR_RST ")\n", __r_ft, __r_libc);   \
+	    else printf("  ft (%d) | lb (%d)\n", __r_ft, __r_libc); fflush(stdout);                                \
+	    (data)->test_ko++;                                                                                     \
+	}                                                                                                          \
+} while (0)
+
+#elif VERBOSE
+
+#define CAP_AND_COMPARE(data, desc, ft_expr, libc_expr) do {                                                   \
+	char __out_ft[CAP_SIZE], __out_libc[CAP_SIZE];                                                             \
+	int __p[2]; ssize_t __n;                                                                                   \
+	int __r_ft, __r_libc;                                                                                      \
+	int __saved_stdout;                                                                                        \
+	                                                                                                           \
+	/* capture ft_expr */                                                                                      \
+	if (pipe(__p) == -1) { perror("pipe"); exit(1); }                                                          \
+	__saved_stdout = dup(STDOUT_FILENO); if (__saved_stdout == -1) { perror("dup"); exit(1); }                 \
+	dup2(__p[1], STDOUT_FILENO); close(__p[1]);                                                                \
+	__r_ft = (ft_expr);                                                                                        \
+	fflush(stdout); dup2(__saved_stdout, STDOUT_FILENO); close(__saved_stdout);                                \
+	__n = read(__p[0], __out_ft, CAP_SIZE - 1); if (__n < 0) __n = 0; __out_ft[__n] = '\0'; close(__p[0]);     \
+	                                                                                                           \
+	/* capture libc_expr */                                                                                    \
+	if (pipe(__p) == -1) { perror("pipe"); exit(1); }                                                          \
+	__saved_stdout = dup(STDOUT_FILENO); if (__saved_stdout == -1) { perror("dup"); exit(1); }                 \
+	dup2(__p[1], STDOUT_FILENO); close(__p[1]);                                                                \
+	__r_libc = (libc_expr);                                                                                    \
+	fflush(stdout); dup2(__saved_stdout, STDOUT_FILENO); close(__saved_stdout);                                \
+	__n = read(__p[0], __out_libc, CAP_SIZE - 1); if (__n < 0) __n = 0; __out_libc[__n] = '\0'; close(__p[0]); \
+	                                                                                                           \
+	/* compare */                                                                                              \
+	int __ok = 0;                                                                                              \
+	if (__r_ft == __r_libc)                                                                                    \
+	{                                                                                                          \
+	    if (__r_ft >= 0 && memcmp(__out_ft, __out_libc, (size_t)__r_ft) == 0) __ok = 1;                        \
+	    if (__r_ft < 0  && memcmp(__out_ft, __out_libc, 1) == 0) __ok = 1;                                     \
+	}                                                                                                          \
+	                                                                                                           \
+	if (__ok)                                                                                                  \
+	    (data)->test_ok++;                                                                                     \
+	else                                                                                                       \
+	{                                                                                                          \
+	    printf(CLR_RED "[FAIL]   %s\n" CLR_RST, (desc));                                                       \
+	    printf("  ft_printf  : %s\n", __out_ft);                                                               \
+	    printf("  libc printf: %s\n", __out_libc);                                                             \
+	    if (__r_ft != __r_libc)                                                                                \
+	        printf("  ft (" CLR_RED "%d" CLR_RST ") | lb (" CLR_GREEN "%d" CLR_RST ")\n", __r_ft, __r_libc);   \
+	    else printf("  ft (%d) | lb (%d)\n", __r_ft, __r_libc); fflush(stdout);                                \
+	    (data)->test_ko++;                                                                                     \
+	}                                                                                                          \
+} while (0)
+
+#else
+
+#define CAP_AND_COMPARE(data, desc, ft_expr, libc_expr) do {                                                   \
+	char __out_ft[CAP_SIZE], __out_libc[CAP_SIZE];                                                             \
+	int __p[2]; ssize_t __n;                                                                                   \
+	int __r_ft, __r_libc;                                                                                      \
+	int __saved_stdout;                                                                                        \
+	                                                                                                           \
+	/* capture ft_expr */                                                                                      \
+	if (pipe(__p) == -1) { perror("pipe"); exit(1); }                                                          \
+	__saved_stdout = dup(STDOUT_FILENO); if (__saved_stdout == -1) { perror("dup"); exit(1); }                 \
+	dup2(__p[1], STDOUT_FILENO); close(__p[1]);                                                                \
+	__r_ft = (ft_expr);                                                                                        \
+	fflush(stdout); dup2(__saved_stdout, STDOUT_FILENO); close(__saved_stdout);                                \
+	__n = read(__p[0], __out_ft, CAP_SIZE - 1); if (__n < 0) __n = 0; __out_ft[__n] = '\0'; close(__p[0]);     \
+	                                                                                                           \
+	/* capture libc_expr */                                                                                    \
+	if (pipe(__p) == -1) { perror("pipe"); exit(1); }                                                          \
+	__saved_stdout = dup(STDOUT_FILENO); if (__saved_stdout == -1) { perror("dup"); exit(1); }                 \
+	dup2(__p[1], STDOUT_FILENO); close(__p[1]);                                                                \
+	__r_libc = (libc_expr);                                                                                    \
+	fflush(stdout); dup2(__saved_stdout, STDOUT_FILENO); close(__saved_stdout);                                \
+	__n = read(__p[0], __out_libc, CAP_SIZE - 1); if (__n < 0) __n = 0; __out_libc[__n] = '\0'; close(__p[0]); \
+	                                                                                                           \
+	/* compare */                                                                                              \
+	int __ok = 0;                                                                                              \
+	if (__r_ft == __r_libc)                                                                                    \
+	{                                                                                                          \
+	    if (__r_ft >= 0 && memcmp(__out_ft, __out_libc, (size_t)__r_ft) == 0) __ok = 1;                        \
+	    if (__r_ft < 0  && memcmp(__out_ft, __out_libc, 1) == 0) __ok = 1;                                     \
+	}                                                                                                          \
+	                                                                                                           \
+	if (__ok)                                                                                                  \
+		(data)->test_ok++;                                                                                     \
+	else                                                                                                       \
+		(data)->test_ko++;                                                                                     \
+} while (0)
+
+#endif
+
 
 #endif /* FT_PRINTF_TESTER_H */

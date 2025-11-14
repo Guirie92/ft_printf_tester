@@ -6,12 +6,13 @@
 /*   By: guillsan <guillsan@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 13:12:33 by guillsan          #+#    #+#             */
-/*   Updated: 2025/11/14 03:12:51 by guillsan         ###   ########.fr       */
+/*   Updated: 2025/11/14 06:42:39 by guillsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf_tester.h"
 
+static char* print_test_suite_result(t_test_data *data);
 static char* print_result(t_test_data *data, size_t total_ok, size_t total_ko,
 	const char *spec);
 static void fmt_nbr(char *buffer, size_t n);
@@ -21,6 +22,7 @@ static void	test_flags_exhaustive(t_test_data *data, const char *spec,
 	t_param_type ptype);
 static void	test_specifiers_mandatory(t_test_data *data);
 static void	test_mixed(t_test_data *data);
+static void	extreme_cases(t_test_data *data);
 static void	test_printf_c(t_test_data *data);
 static void	flush_sleep(t_test_data *data);
 
@@ -73,6 +75,14 @@ int main(void)
 	//test_duplicates_and_invalid
 
 #endif
+
+#if TEST_INVALID
+	extreme_cases(&data);
+
+#endif
+
+	print_test_suite_result(&data);
+	
 	
 	return (0);
 }
@@ -942,6 +952,43 @@ static void test_mixed(t_test_data *data)
 	flush_sleep(&data);
 }
 
+void extreme_cases(t_test_data *data)
+{
+    /* TEST 1 */
+    CAP_AND_COMPARE(data,
+        "\"fmt\" \"ascii\" \"%.3w\" (23)",
+        ft_printf("fmt" "ascii" "%.3w", 23),
+        printf  ("fmt" "ascii" "%.3w", 23)
+    );
+
+    /* TEST 2 */
+    CAP_AND_COMPARE(data,
+        "\"fmt\" \"ascii\" \"%.3w\" ()",
+        ft_printf("fmt" "ascii" "%.3w"),
+        printf  ("fmt" "ascii" "%.3w")
+    );
+
+    /* TEST 3 */
+    CAP_AND_COMPARE(data,
+        "\"fmt\" \"ascii\" \"%.3\" (\"pipo\")",
+        ft_printf("fmt" "ascii" "%.3", "pipo"),
+        printf  ("fmt" "ascii" "%.3", "pipo")
+    );
+
+    /* TEST 4 */
+    CAP_AND_COMPARE(data,
+        "\"fmt\" \"ascii\" \"%.3%s\" (\"pipo\")",
+        ft_printf("fmt" "ascii" "%.3%s", "pipo"),
+        printf  ("fmt" "ascii" "%.3%s", "pipo")
+    );
+
+    /* TEST 5 */
+    CAP_AND_COMPARE(data,
+        "\"fmt\" \"ascii\" \"%.3%s\" CLR_CYAN \"\\naaaaa\" CLR_RST \"p5\"",
+        ft_printf("fmt" "ascii" "%.3%s" CLR_CYAN "\naaaaa" CLR_RST "p5"),
+        printf  ("fmt" "ascii" "%.3%s" CLR_CYAN "\naaaaa" CLR_RST "p5")
+    );
+}
 
 static char* print_result(t_test_data *data, size_t total_ok, size_t total_ko,
 	const char *spec)
@@ -968,6 +1015,51 @@ static char* print_result(t_test_data *data, size_t total_ok, size_t total_ko,
 
 	data->test_ok += total_ok;
 	data->test_ko += total_ko;
+}
+
+
+static char* print_test_suite_result(t_test_data *data)
+{
+	char buffer[32];
+	char bf_tmp[32];
+	int middle_line_len;
+	const char *format_ok = "========== CONGRATULATIONS, ALL TEST PASSED (total: %s) ==========";
+	const char *format_ko = "===================  TESTS FAILED (%s / %s) ===================";
+
+	if (data->test_ko == 0)
+	{
+		fmt_nbr(buffer, data->test_ok);
+		middle_line_len = snprintf(NULL, 0, format_ok, buffer);
+		printf(CLR_GREEN "\n\n");
+		for (size_t i = 0; i < middle_line_len; i++)
+			printf("=");
+		printf("\n");
+		printf(format_ok, buffer);
+		printf("\n");
+		
+		for (size_t i = 0; i < middle_line_len; i++)
+			printf("=");
+		printf("\n\n" CLR_RST);
+
+	}
+	else
+	{
+		fmt_nbr(buffer, data->test_ko);
+		fmt_nbr(bf_tmp, data->test_ko + data->test_ok);
+		middle_line_len = snprintf(NULL, 0, format_ko, buffer, bf_tmp);
+		
+		printf(CLR_RED "\n\n");
+		for (size_t i = 0; i < middle_line_len; i++)
+			printf("=");
+		printf("\n");
+		printf(format_ko, buffer, bf_tmp);
+		printf("\n");
+		
+		for (size_t i = 0; i < middle_line_len; i++)
+			printf("=");
+		printf("\n\n" CLR_RST);
+	}
+	fflush(stdout);
 }
 
 static void fmt_nbr(char *buffer, size_t n)
