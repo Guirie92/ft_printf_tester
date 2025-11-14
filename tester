@@ -14,7 +14,7 @@ Options:
   -u              Test 'u' specifier
   -x, -X          Test 'x' / 'X' specifiers
   -b, --bonus     Run bonus tests
-  -e, --exteme    Run bonus + invalid and extreme cases (also: --invalid)
+  -e, --extreme   Run bonus + invalid and extreme cases (located in %mixed) (also: --invalid)
   -v, --verbose   Verbose output
   -k, --pass      Prints test that are O.K. (also: --pok)
   -m, --valgrind  Run under valgrind (also: --mem, --strict, --memcheck)
