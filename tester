@@ -14,8 +14,10 @@ Options:
   -u              Test 'u' specifier
   -x, -X          Test 'x' / 'X' specifiers
   -b, --bonus     Run bonus tests
+  -e, --exteme    Run bonus + invalid and extreme cases (also: --invalid)
   -v, --verbose   Verbose output
-  -m, --valgrind  Run under valgrind (also: --mem, --strict, etc.)
+  -k, --pass      Prints test that are O.K. (also: --pok)
+  -m, --valgrind  Run under valgrind (also: --mem, --strict, --memcheck)
 
   -h, --help      Show this help message
 
@@ -23,6 +25,7 @@ Examples:
   $0 -c
   $0 -c --bonus
   $0 -x -v --valgrind
+  $0 -b --verbose --pass
 EOF
 }
 
@@ -36,7 +39,7 @@ TEST_PASS=0       # Enables PRINT_OK (for successful tests)
 RUN_VALGRIND=0
 
 # --- Argument Parsing ---
-TEMP=$(getopt -o ocspdiuxXbvmh -l bonus,invalid,verbose,pass,pok,valgrind,mem,memcheck,strict,help -- "$@")
+TEMP=$(getopt -o ocspdiuxXbevkmh -l bonus,extreme,invalid,verbose,pass,pok,valgrind,mem,memcheck,strict,help -- "$@")
 if [ $? -ne 0 ]; then
   echo "Failed to parse options." >&2
   exit 1
@@ -48,7 +51,9 @@ while true; do
     -o) TEST_OCTAL=1; shift ;;
     -c|-s|-p|-d|-i|-u|-x|-X) SPECIFIER_TO_TEST="${1#-}"; shift ;;  # keep last char
     -b|--bonus) TEST_BONUS=1; shift ;;
+    -e|--extreme|--invalid) TEST_BONUS=1; shift ;;
     -v|--verbose) TEST_VERBOSE=1; shift ;;
+    -k|--pok|--pass) TEST_VERBOSE=1; TEST_PASS=1; shift ;;
     -m|--valgrind|--mem|--memcheck|--strict) RUN_VALGRIND=1; shift ;;
     -h|--help) print_help; exit 0 ;;
     --) shift; break ;;
