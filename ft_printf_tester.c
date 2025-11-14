@@ -6,7 +6,7 @@
 /*   By: guillsan <guillsan@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 13:12:33 by guillsan          #+#    #+#             */
-/*   Updated: 2025/11/14 02:45:16 by guillsan         ###   ########.fr       */
+/*   Updated: 2025/11/14 03:12:51 by guillsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ int main(void)
 
 	test_mixed(&data);
 
-	printf("\n===== TESTING " CLR_CYAN "[bonus]" CLR_RST " =====\n");
-
 #if TEST_FLAGS
+
+	printf("\n===== TESTING " CLR_CYAN "[bonus]" CLR_RST " =====\n");
 
 	if (TEST_TYPE("c"))
 	{
@@ -422,7 +422,7 @@ static void run_basic_spec_for(t_test_data *data,
 	}
 
 	print_result(data, total_ok, total_ko, spec);
-	flush_sleep(&data);
+	flush_sleep(data);
 }
 
 /* Mandatory specifiers only (no flags/FWM/prec) */
